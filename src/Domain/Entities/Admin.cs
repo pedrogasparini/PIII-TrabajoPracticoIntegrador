@@ -1,11 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace Domain.Entities
+﻿
+public class Admin : User
 {
-    public class Admin : User
+    public Admin()
     {
-       
-
+        Type = "Admin";
     }
+
 }

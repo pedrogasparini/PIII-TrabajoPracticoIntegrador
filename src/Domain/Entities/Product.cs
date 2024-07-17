@@ -1,23 +1,16 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Domain.Entities
+﻿
+public class Product
 {
-    public class Product
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public float Price { get; set; }
+    public int StockAvailable { get; set; }
+    public List<string> StockList { get; set; } // Lista de información detallada del stock
+
+    public Product()
     {
-        [Key]
-
-        public int Id { get; set; }
-
-        public string Name { get; set; }
-
-        public decimal Price { get; set; }
-        public int StockAvailable { get; set; }
-        public string Category { get; set; }
-        public int UserId { get; set; }
-
-        public ICollection<SaleLine> SaleLines { get; set; }
-
+        StockList = new List<string>();
     }
 }
+
+

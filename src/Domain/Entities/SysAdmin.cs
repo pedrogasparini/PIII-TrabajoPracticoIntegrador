@@ -1,10 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace Domain.Entities
+﻿
+public class SysAdmin : User
 {
-    public class SysAdmin : User
+    public SysAdmin()
     {
-        
+        Type = "SysAdmin";
     }
+
 }
