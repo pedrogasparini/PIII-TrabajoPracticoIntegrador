@@ -1,7 +1,16 @@
 ﻿
-public class Sale
+using System.ComponentModel.DataAnnotations;
+
+namespace Domain.Entities
 {
-    public int Amount { get; set; }
-    public float Total { get; set; }
-    public string ProductSell { get; set; } // Producto vendido
+    public class Sale
+    {
+        public int Id { get; set; }
+        public DateTime Date { get; set; }
+
+        [Required]
+        public ICollection<SaleDetail>? SaleDetails { get; set; }
+
+        public decimal Total { get; set; }
+    }
 }

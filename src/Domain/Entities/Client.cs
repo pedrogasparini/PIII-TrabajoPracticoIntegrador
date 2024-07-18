@@ -1,10 +1,8 @@
 ﻿
-public class Cliente : User
+namespace Domain.Entities
 {
-    public string Address { get; set; }
-
-    public Cliente()
+    public class Client : User
     {
-        Type = "Cliente";
+
     }
 }

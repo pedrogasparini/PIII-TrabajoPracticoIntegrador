@@ -1,48 +1,68 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Application.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Html;
+using Domain.Entities;
+using Application.Interfaces;
 
-[Route("api/[controller]")]
 [ApiController]
+[Route("api/[controller]")]
 public class SaleController : ControllerBase
 {
-    private List<Sale> _sales; // Simulación de una lista de ventas (en un escenario real usarías una base de datos)
+    private readonly ISaleService _saleService;
 
-    public SaleController()
+    public SaleController(ISaleService saleService)
     {
-        // Inicialización de ventas de ejemplo
-        _sales = new List<Sale>();
+        _saleService = saleService;
     }
 
-    // GET api/sale
     [HttpGet]
-    public IActionResult Get()
+    public ActionResult<IEnumerable<Sale>> GetSales()
     {
-        return Ok(_sales);
+        var sales = _saleService.GetAllSales();
+        return Ok(sales);
     }
 
-    // GET api/sale/{id}
     [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    public ActionResult<Sale> GetSaleById(int id)
     {
-        var sale = _sales.FirstOrDefault(s => s.SaleId == id);
+        var sale = _saleService.GetSaleById(id);
         if (sale == null)
+        {
             return NotFound();
-
+        }
         return Ok(sale);
     }
 
-    // POST api/sale
     [HttpPost]
-    public IActionResult Post([FromBody] Sale sale)
+    public ActionResult<Sale> AddSale(Sale sale)
     {
-        sale.SaleId = _sales.Count + 1; // Simulación de generación de ID
-        sale.SaleDate = DateTime.Now; // Fecha actual
+        _saleService.AddSale(sale);
+        return CreatedAtAction(nameof(GetSaleById), new { id = sale.Id }, sale);
+    }
 
-        // Simulación de lógica para calcular detalles de venta, actualizar stock, etc.
+    [HttpPut("{id}")]
+    public IActionResult UpdateSale(int id, Sale sale)
+    {
+        if (id != sale.Id)
+        {
+            return BadRequest();
+        }
 
-        _sales.Add(sale);
-        return CreatedAtAction(nameof(GetById), new { id = sale.SaleId }, sale);
+        _saleService.UpdateSale(sale);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public IActionResult DeleteSale(int id)
+    {
+        var sale = _saleService.GetSaleById(id);
+        if (sale == null)
+        {
+            return NotFound();
+        }
+
+        _saleService.DeleteSale(id);
+        return NoContent();
     }
 }
+

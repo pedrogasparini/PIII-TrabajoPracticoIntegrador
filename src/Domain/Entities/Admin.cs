@@ -1,9 +1,8 @@
 ﻿
-public class Admin : User
+namespace Domain.Entities
 {
-    public Admin()
+    public class Admin : User 
     {
-        Type = "Admin";
-    }
 
+    }
 }

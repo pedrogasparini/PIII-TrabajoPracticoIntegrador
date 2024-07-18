@@ -1,9 +1,8 @@
 ﻿
-public class SysAdmin : User
+namespace Domain.Entities
 {
-    public SysAdmin()
+    public class SysAdmin : User
     {
-        Type = "SysAdmin";
+       
     }
-
 }

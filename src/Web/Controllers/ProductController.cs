@@ -1,75 +1,68 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
+﻿
+using Application.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Html;
+using Domain.Entities;
+using Application.Interfaces;
 
-[Route("api/[controller]")]
 [ApiController]
+[Route("api/[controller]")]
 public class ProductController : ControllerBase
 {
-    private List<Product> _products; // Simulación de una lista de productos (en un escenario real usarías una base de datos)
+    private readonly IProductService _productService;
 
-    public ProductController()
+    public ProductController(IProductService productService)
     {
-        // Inicialización de productos de ejemplo
-        _products = new List<Product>
-        {
-            new Product { ProductId = 1, Name = "Product A", Description = "Description A", Price = 10.50m, Stock = 100 },
-            new Product { ProductId = 2, Name = "Product B", Description = "Description B", Price = 15.75m, Stock = 50 }
-        };
+        _productService = productService;
     }
 
-    // GET api/product
     [HttpGet]
-    public IActionResult Get()
+    public ActionResult<IEnumerable<Product>> GetProducts()
     {
-        return Ok(_products);
+        var products = _productService.GetAllProducts();
+        return Ok(products);
     }
 
-    // GET api/product/{id}
     [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    public ActionResult<Product> GetProductById(int id)
     {
-        var product = _products.FirstOrDefault(p => p.ProductId == id);
+        var product = _productService.GetProductById(id);
         if (product == null)
+        {
             return NotFound();
-
+        }
         return Ok(product);
     }
 
-    // POST api/product
     [HttpPost]
-    public IActionResult Post([FromBody] Product product)
+    public ActionResult<Product> AddProduct(Product product)
     {
-        _products.Add(product);
-        return CreatedAtAction(nameof(GetById), new { id = product.ProductId }, product);
+        _productService.AddProduct(product);
+        return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
     }
 
-    // PUT api/product/{id}
     [HttpPut("{id}")]
-    public IActionResult Put(int id, [FromBody] Product product)
+    public IActionResult UpdateProduct(int id, Product product)
     {
-        var existingProduct = _products.FirstOrDefault(p => p.ProductId == id);
-        if (existingProduct == null)
-            return NotFound();
+        if (id != product.Id)
+        {
+            return BadRequest();
+        }
 
-        existingProduct.Name = product.Name;
-        existingProduct.Description = product.Description;
-        existingProduct.Price = product.Price;
-        existingProduct.Stock = product.Stock;
-
+        _productService.UpdateProduct(product);
         return NoContent();
     }
 
-    // DELETE api/product/{id}
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public IActionResult DeleteProduct(int id)
     {
-        var product = _products.FirstOrDefault(p => p.ProductId == id);
+        var product = _productService.GetProductById(id);
         if (product == null)
+        {
             return NotFound();
+        }
 
-        _products.Remove(product);
+        _productService.DeleteProduct(id);
         return NoContent();
     }
 }
-
