@@ -1,5 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace Domain.Entities
 {
@@ -16,5 +18,14 @@ namespace Domain.Entities
         public Product? Product { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
+
+        public SaleDetail() { }
+        public SaleDetail(Sale sale, Product product, int quantity, decimal unitPrice)
+        {
+            Sale = sale;
+            Product = product;
+            Quantity = quantity;
+            UnitPrice = unitPrice;
+        }
     }
 }

@@ -1,68 +1,82 @@
 ﻿
-using Application.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Html;
-using Domain.Entities;
+using Application.Models.Request;
+using Application.Services;
+using System;
 using Application.Interfaces;
 
-[ApiController]
-[Route("api/[controller]")]
-public class ProductController : ControllerBase
+namespace YourApplication.Controllers
 {
-    private readonly IProductService _productService;
-
-    public ProductController(IProductService productService)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ProductController : ControllerBase
     {
-        _productService = productService;
-    }
+        private readonly IProductService _productService;
 
-    [HttpGet]
-    public ActionResult<IEnumerable<Product>> GetProducts()
-    {
-        var products = _productService.GetAllProducts();
-        return Ok(products);
-    }
-
-    [HttpGet("{id}")]
-    public ActionResult<Product> GetProductById(int id)
-    {
-        var product = _productService.GetProductById(id);
-        if (product == null)
+        public ProductController(IProductService productService)
         {
-            return NotFound();
-        }
-        return Ok(product);
-    }
-
-    [HttpPost]
-    public ActionResult<Product> AddProduct(Product product)
-    {
-        _productService.AddProduct(product);
-        return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
-    }
-
-    [HttpPut("{id}")]
-    public IActionResult UpdateProduct(int id, Product product)
-    {
-        if (id != product.Id)
-        {
-            return BadRequest();
+            _productService = productService;
         }
 
-        _productService.UpdateProduct(product);
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public IActionResult DeleteProduct(int id)
-    {
-        var product = _productService.GetProductById(id);
-        if (product == null)
+        [HttpGet]
+        public IActionResult GetAllProducts()
         {
-            return NotFound();
+            var products = _productService.GetAllProducts();
+            return Ok(products);
         }
 
-        _productService.DeleteProduct(id);
-        return NoContent();
+        [HttpGet("{id}")]
+        public IActionResult GetProductById(int id)
+        {
+            var product = _productService.GetProductById(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+
+        [HttpPost]
+        public IActionResult CreateProduct([FromBody] ProductCreateRequest productCreateRequest)
+        {
+            try
+            {
+                _productService.CreateProduct(productCreateRequest);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateProduct(int id, [FromBody] ProductUpdateRequest productUpdateRequest)
+        {
+            try
+            {
+                _productService.UpdateProduct(id, productUpdateRequest);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteProduct(int id)
+        {
+            try
+            {
+                _productService.DeleteProduct(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
+

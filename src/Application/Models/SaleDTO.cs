@@ -20,5 +20,15 @@ namespace Application.Models
                 SaleDetails = sale.SaleDetails != null ? SaleDetailDTO.CreateList(sale.SaleDetails) : null
             };
         }
+
+        public static List<SaleDTO> CreateList(IEnumerable<Sale> sales)
+        {
+            List<SaleDTO> listDto = new List<SaleDTO>();
+            foreach (var sale in sales)
+            {
+                listDto.Add(Create(sale));
+            }
+            return listDto;
+        }
     }
 }

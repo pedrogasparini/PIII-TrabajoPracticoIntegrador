@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Html;
 using Domain.Entities;
 using Application.Interfaces;
+using Application.Models.Request;
+using System.Security.Claims;
+using Application.Models;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -23,46 +26,52 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Admin> GetAdminById(int id)
+    public ActionResult<AdminDTO> GetAdminById(int id)
     {
-        var admin = _adminService.GetAdminById(id);
-        if (admin == null)
-        {
-            return NotFound();
-        }
-        return Ok(admin);
+        return _adminService.GetAdminById(id);
     }
 
     [HttpPost]
-    public ActionResult<Admin> AddAdmin(Admin admin)
+    public ActionResult<Admin> AddAdmin(AdminCreateRequest adminCreateRequest)
     {
-        _adminService.CreateAdmin(admin);
-        return CreatedAtAction(nameof(GetAdminById), new { id = admin.Id }, admin);
+        try
+        {
+            _adminService.CreateAdmin(adminCreateRequest);
+            return Ok();
+        }
+        catch (System.Exception )
+        {
+            return  BadRequest();
+        }
     }
 
+
     [HttpPut("{id}")]
-    public IActionResult UpdateAdmin(int id, Admin admin)
+    public IActionResult UpdateAdmin(int id, AdminUpdateRequest adminUpdateRequest)
     {
-        if (id != admin.Id)
+        try
+        {
+            _adminService.UpdateAdmin(id, adminUpdateRequest);
+            return Ok();
+        }
+        catch (System.Exception)
         {
             return BadRequest();
         }
-
-        _adminService.UpdateAdmin(admin);
-        return NoContent();
     }
 
     [HttpDelete("{id}")]
     public IActionResult DeleteAdmin(int id)
     {
-        var admin = _adminService.GetAdminById(id);
-        if (admin == null)
+        try
+        {
+            _adminService.DeleteAdmin(id);
+            return Ok();
+        }
+        catch (System.Exception)
         {
             return NotFound();
         }
-
-        _adminService.DeleteAdmin(id);
-        return NoContent();
     }
 }
 

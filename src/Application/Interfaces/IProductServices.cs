@@ -1,13 +1,15 @@
-﻿using Domain.Entities;
+﻿using Application.Models.Request;
+using Application.Models;
+using Domain.Entities;
 
 namespace Application.Interfaces
 {
     public interface IProductService
     {
-        IEnumerable<Product> GetAllProducts();
-        Product GetProductById(int id);
-        void AddProduct(Product product);
-        void UpdateProduct(Product product);
+        IEnumerable<ProductDTO> GetAllProducts();
+        ProductDTO GetProductById(int id);
+        void CreateProduct(ProductCreateRequest productCreateRequest);
+        void UpdateProduct(int id, ProductUpdateRequest productUpdateRequest);
         void DeleteProduct(int id);
     }
 }

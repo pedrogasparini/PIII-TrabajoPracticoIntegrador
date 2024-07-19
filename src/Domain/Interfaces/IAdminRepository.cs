@@ -1,15 +1,9 @@
-﻿
-using Domain.Entities;
+﻿using Domain.Entities;
+using Domain.Interfaces;
 
-namespace Domain.Interfaces
+namespace Domain;
+
+public interface IAdminRepository : IBaseRepository<Admin>
 {
-    public interface IAdminRepository
-    {
-        IEnumerable<Admin> GetAllAdmins();
-        Admin GetAdminById(int id);
-        void AddAdmin(Admin admin);
-        void UpdateAdmin(Admin admin);
-        void DeleteAdmin(Admin admin);
-    }
 }
 

@@ -1,5 +1,8 @@
 ﻿
 using Application.Interfaces;
+using Application.Models.Request;
+using Application.Models;
+using Domain;
 using Domain.Entities;
 using Domain.Interfaces;
 
@@ -8,40 +11,59 @@ namespace Application.Services
     public class SaleService : ISaleService
     {
         private readonly ISaleRepository _saleRepository;
+        private readonly ISaleDetailsRepository _saledetailsRepository;
 
-        public SaleService(ISaleRepository saleRepository)
+        public SaleService(ISaleRepository saleRepository, ISaleDetailsRepository saledetailsRepository)
         {
             _saleRepository = saleRepository;
+            _saledetailsRepository = saledetailsRepository;
         }
 
-        public IEnumerable<Sale> GetAllSales()
+
+        public IEnumerable<SaleDTO> GetAllSales()
         {
-            return _saleRepository.GetAllSales();
+            var objs = _saleRepository.GetAll();
+            return SaleDTO.CreateList(objs);
         }
 
-        public Sale GetSaleById(int id)
+        public SaleDTO GetSaleById(int id)
         {
-            return _saleRepository.GetSaleById(id);
+            var obj = _saleRepository.GetById(id);
+            return SaleDTO.Create(obj);
         }
 
-        public void AddSale(Sale sale)
+        public void CreateSale(SaleCreateRequest saleCreteRequest)
         {
-            _saleRepository.AddSale(sale);
+            
+            var saledetails = new List<SaleDetail>();
+            foreach (var saledetailId in saleCreteRequest.SaleDetailIds)
+            {
+                var saledetail = _saledetailsRepository.GetById(saledetailId);
+                if (saledetail != null)
+                {
+                    saledetails.Add(saledetail);
+                }
+            }
+            var sale = new Sale(saleCreteRequest.Date, saledetails, saleCreteRequest.Total);
+            _saleRepository.Add(sale);
         }
 
-        public void UpdateSale(Sale sale)
+        public void UpdateSale(int id, SaleUpdateRequest saleUpdateRequest)
         {
-            _saleRepository.UpdateSale(sale);
+            var sale = _saleRepository.GetById(id);
+            if (saleUpdateRequest.Total != null) sale.Total = saleUpdateRequest.Total;
+
+            _saleRepository.Update(sale);
         }
 
         public void DeleteSale(int id)
         {
-            var sale = _saleRepository.GetSaleById(id);
+            var sale = _saleRepository.GetById(id);
             if (sale == null)
             {
-                //agregsr exc.
+                 //exceptions
             }
-            _saleRepository.DeleteSale(sale);
+            _saleRepository.Delete(sale);
         }
     }
 }

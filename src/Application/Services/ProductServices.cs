@@ -1,5 +1,7 @@
-﻿
-using Application.Interfaces;
+﻿using Application.Interfaces;
+using Application.Models;
+using Application.Models.Request;
+using Domain;
 using Domain.Entities;
 using Domain.Interfaces;
 
@@ -14,35 +16,46 @@ namespace Application.Services
             _productRepository = productRepository;
         }
 
-        public IEnumerable<Product> GetAllProducts()
+        public IEnumerable<ProductDTO> GetAllProducts()
         {
-            return _productRepository.GetAllProducts();
+            var objs = _productRepository.GetAll();
+            return ProductDTO.CreateList(objs);
         }
 
-        public Product GetProductById(int id)
+        public ProductDTO GetProductById(int id)
         {
-            return _productRepository.GetProductById(id);
+            var obj = _productRepository.GetById(id);
+            return ProductDTO.Create(obj);
         }
 
-        public void AddProduct(Product product)
+        public void CreateProduct(ProductCreateRequest productCreteRequest)
         {
-            _productRepository.AddProduct(product);
+            var product = new Product(productCreteRequest.Name, productCreteRequest.Price , productCreteRequest.StockAvailable);
+            _productRepository.Add(product);
         }
 
-        public void UpdateProduct(Product product)
+        public void UpdateProduct(int id, ProductUpdateRequest productUpdateRequest)
         {
-            _productRepository.UpdateProduct(product);
+            var product = _productRepository.GetById(id);
+            if (productUpdateRequest.Name != string.Empty) product.Name = productUpdateRequest.Name;
+
+            if (productUpdateRequest.Price != ) product.Price = productUpdateRequest.Price;
+
+            if (productUpdateRequest.StockAvailable != null) product.StockAvailable = productUpdateRequest.StockAvailable;
+
+            _productRepository.Update(product);
         }
 
         public void DeleteProduct(int id)
         {
-            var obj = _productRepository.GetProductById(id);
-            if (obj == null)
+            var product = _productRepository.GetById(id);
+            if (product == null)
             {
-                //agregar exepcion
+                //exceptions
             }
-            _productRepository.DeleteProduct(obj);
+            _productRepository.Delete(product);
         }
+
     }
 }
 

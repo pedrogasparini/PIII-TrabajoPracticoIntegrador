@@ -1,5 +1,8 @@
 ﻿
 using Application.Interfaces;
+using Application.Models;
+using Application.Models.Request;
+using Domain;
 using Domain.Entities;
 using Domain.Interfaces;
 
@@ -14,34 +17,48 @@ namespace Application.Services
             _adminRepository = adminRepository;
         }
 
-        public IEnumerable<Admin> GetAllAdmins()
+        public IEnumerable<AdminDTO> GetAllAdmins()
         {
-            return _adminRepository.GetAllAdmins();
+            var objs = _adminRepository.GetAll();
+            return AdminDTO.CreateList(objs);
         }
 
-        public Admin GetAdminById(int id)
+        public AdminDTO GetAdminById(int id)
         {
-            return _adminRepository.GetAdminById(id);
+           var obj =  _adminRepository.GetById(id);
+            return AdminDTO.Create(obj);
         }
 
-        public void CreateAdmin(Admin admin)
+        public void CreateAdmin(AdminCreateRequest adminCreteRequest)
         {
-            _adminRepository.AddAdmin(admin);
+            var admin = new Admin(adminCreteRequest.Name, adminCreteRequest.LastName, adminCreteRequest.Email, adminCreteRequest.Username, adminCreteRequest.Password);
+            _adminRepository.Add(admin);
         }
 
-        public void UpdateAdmin(Admin admin)
+        public void UpdateAdmin(int id, AdminUpdateRequest adminUpdateRequest)
         {
-            _adminRepository.UpdateAdmin(admin);
+            var admin = _adminRepository.GetById(id);
+            if (adminUpdateRequest.Name != string.Empty) admin.Name = adminUpdateRequest.Name;
+
+            if (adminUpdateRequest.Email != string.Empty) admin.Email = adminUpdateRequest.Email;
+
+            if (adminUpdateRequest.Password != string.Empty) admin.Password = adminUpdateRequest.Password;
+
+            if (adminUpdateRequest.Username != string.Empty) admin.Username = adminUpdateRequest.Username;
+
+            if (adminUpdateRequest.LastName != string.Empty) admin.LastName = adminUpdateRequest.LastName;
+
+            _adminRepository.Update(admin);
         }
 
         public void DeleteAdmin(int id)
         {
-            var admin = _adminRepository.GetAdminById(id);
+            var admin = _adminRepository.GetById(id);
             if (admin == null)
             {
-                //lo mismo
+                //exceptions
             }
-            _adminRepository.DeleteAdmin(admin);
+            _adminRepository.Delete(admin);
         }
     }
 }

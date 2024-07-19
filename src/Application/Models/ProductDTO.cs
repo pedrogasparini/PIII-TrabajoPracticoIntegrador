@@ -20,5 +20,15 @@ namespace Application.Models
                 StockAvailable = product.StockAvailable
             };
         }
+
+        public static List<ProductDTO> CreateList(IEnumerable<Product> products)
+        {
+            List<ProductDTO> listDto = new List<ProductDTO>();
+            foreach (var product in products)
+            {
+                listDto.Add(Create(product));
+            }
+            return listDto;
+        }
     }
 }
