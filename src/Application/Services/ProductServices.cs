@@ -51,7 +51,7 @@ namespace Application.Services
             var product = _productRepository.GetById(id);
             if (product == null)
             {
-                //exceptions
+                throw new NotFoundException(nameof(Product), id);
             }
             _productRepository.Delete(product);
         }

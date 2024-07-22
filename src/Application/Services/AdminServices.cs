@@ -56,7 +56,7 @@ namespace Application.Services
             var admin = _adminRepository.GetById(id);
             if (admin == null)
             {
-                //exceptions
+                throw new NotFoundException(nameof(Admin), id);
             }
             _adminRepository.Delete(admin);
         }

@@ -61,7 +61,7 @@ namespace Application.Services
             var sale = _saleRepository.GetById(id);
             if (sale == null)
             {
-                 //exceptions
+                throw new NotFoundException(nameof(Sale), id);
             }
             _saleRepository.Delete(sale);
         }

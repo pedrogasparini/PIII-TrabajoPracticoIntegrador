@@ -55,7 +55,7 @@ namespace Application.Services
             var client = _clientRepository.GetById(id);
             if (client == null)
             {
-                //exceptions
+                throw new NotFoundException(nameof(Client), id);
             }
             _clientRepository.Delete(client);
         }

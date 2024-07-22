@@ -66,7 +66,7 @@ namespace Application.Services
             var saledetails = _saledetailsRepository.GetById(id);
             if (saledetails == null)
             {
-                //exceptions
+                throw new NotFoundException(nameof(SaleDetail), id);
             }
             _saledetailsRepository.Delete(saledetails);
         }

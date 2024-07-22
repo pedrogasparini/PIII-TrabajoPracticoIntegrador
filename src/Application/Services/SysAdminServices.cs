@@ -53,19 +53,11 @@ namespace Application.Services
             var sysadmin = _sysadminRepository.GetById(id);
             if (sysadmin == null)
             {
-                //exceptions
+                throw new NotFoundException(nameof(SysAdmin), id);
             }
             _sysadminRepository.Delete(sysadmin);
         }
 
-        public void CreateSysAdmin(SysAdmin sysadmin)
-        {
-            throw new NotImplementedException();
-        }
 
-        public void UpdateSysAdmin(SysAdmin sysadmin)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
