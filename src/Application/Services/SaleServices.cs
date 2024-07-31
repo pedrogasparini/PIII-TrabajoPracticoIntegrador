@@ -5,6 +5,7 @@ using Application.Models;
 using Domain;
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Exceptions;
 
 namespace Application.Services
 {
@@ -28,7 +29,8 @@ namespace Application.Services
 
         public SaleDTO GetSaleById(int id)
         {
-            var obj = _saleRepository.GetById(id);
+            var obj = _saleRepository.GetById(id)
+                ?? throw new NotFoundException(nameof(Sale), id);
             return SaleDTO.Create(obj);
         }
 
@@ -50,7 +52,9 @@ namespace Application.Services
 
         public void UpdateSale(int id, SaleUpdateRequest saleUpdateRequest)
         {
-            var sale = _saleRepository.GetById(id);
+            var sale = _saleRepository.GetById(id)
+                ?? throw new NotFoundException(nameof(Sale), id); 
+
             if (saleUpdateRequest.Total != null) sale.Total = saleUpdateRequest.Total;
 
             _saleRepository.Update(sale);

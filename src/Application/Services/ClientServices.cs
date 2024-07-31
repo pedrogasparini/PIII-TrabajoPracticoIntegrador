@@ -3,6 +3,7 @@ using Application.Models;
 using Application.Models.Request;
 using Domain;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 
 namespace Application.Services
@@ -24,7 +25,8 @@ namespace Application.Services
 
         public ClientDTO GetClientById(int id)
         {
-            var obj = _clientRepository.GetById(id);
+            var obj = _clientRepository.GetById(id)
+                ?? throw new NotFoundException(nameof(Client), id);
             return ClientDTO.Create(obj);
         }
 
@@ -36,7 +38,9 @@ namespace Application.Services
 
         public void UpdateClient(int id, ClientUpdateRequest clientUpdateRequest)
         {
-            var client = _clientRepository.GetById(id);
+            var client = _clientRepository.GetById(id)
+                ?? throw new NotFoundException(nameof(Client), id);
+
             if (clientUpdateRequest.Name != string.Empty) client.Name = clientUpdateRequest.Name;
 
             if (clientUpdateRequest.Email != string.Empty) client.Email = clientUpdateRequest.Email;

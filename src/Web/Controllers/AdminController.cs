@@ -1,77 +1,115 @@
 ﻿using Application.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Html;
 using Domain.Entities;
 using Application.Interfaces;
 using Application.Models.Request;
-using System.Security.Claims;
 using Application.Models;
+using Domain.Exceptions; 
+using System;
+using System.Collections.Generic;
 
-[ApiController]
-[Route("api/[controller]")]
-public class AdminController : ControllerBase
+namespace Web.Controllers
 {
-    private readonly IAdminService _adminService;
-
-    public AdminController(IAdminService adminService)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AdminController : ControllerBase
     {
-        _adminService = adminService;
-    }
+        private readonly IAdminService _adminService;
 
-    [HttpGet]
-    public ActionResult<IEnumerable<Admin>> GetAdmins()
-    {
-        var admins = _adminService.GetAllAdmins();
-        return Ok(admins);
-    }
-
-    [HttpGet("{id}")]
-    public ActionResult<AdminDTO> GetAdminById(int id)
-    {
-        return _adminService.GetAdminById(id);
-    }
-
-    [HttpPost]
-    public ActionResult<Admin> AddAdmin(AdminCreateRequest adminCreateRequest)
-    {
-        try
+        public AdminController(IAdminService adminService)
         {
-            _adminService.CreateAdmin(adminCreateRequest);
-            return Ok();
+            _adminService = adminService;
         }
-        catch (System.Exception )
-        {
-            return  BadRequest();
-        }
-    }
 
+        [HttpGet]
+        public ActionResult<IEnumerable<Admin>> GetAdmins()
+        {
+            try
+            {
+                var admins = _adminService.GetAllAdmins();
+                return Ok(admins);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return StatusCode(500, "An unexpected error occurred.");
+            }
+        }
 
-    [HttpPut("{id}")]
-    public IActionResult UpdateAdmin(int id, AdminUpdateRequest adminUpdateRequest)
-    {
-        try
+        [HttpGet("{id}")]
+        public ActionResult<AdminDTO> GetAdminById(int id)
         {
-            _adminService.UpdateAdmin(id, adminUpdateRequest);
-            return Ok();
+            try
+            {
+                var admin = _adminService.GetAdminById(id);
+                if (admin == null)
+                {
+                    throw new NotFoundException("Admin", id);
+                }
+                return Ok(admin);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return StatusCode(500, "An unexpected error occurred.");
+            }
         }
-        catch (System.Exception)
-        {
-            return BadRequest();
-        }
-    }
 
-    [HttpDelete("{id}")]
-    public IActionResult DeleteAdmin(int id)
-    {
-        try
+        [HttpPost]
+        public ActionResult<Admin> AddAdmin([FromBody] AdminCreateRequest adminCreateRequest)
         {
-            _adminService.DeleteAdmin(id);
-            return Ok();
+            try
+            {
+                _adminService.CreateAdmin(adminCreateRequest);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return StatusCode(500, "An unexpected error occurred.");
+            }
         }
-        catch (System.Exception)
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateAdmin(int id, [FromBody] AdminUpdateRequest adminUpdateRequest)
         {
-            return NotFound();
+            try
+            {
+                _adminService.UpdateAdmin(id, adminUpdateRequest);
+                return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return StatusCode(500, "An unexpected error occurred.");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteAdmin(int id)
+        {
+            try
+            {
+                _adminService.DeleteAdmin(id);
+                return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return StatusCode(500, "An unexpected error occurred.");
+            }
         }
     }
 }
-

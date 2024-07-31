@@ -1,11 +1,11 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Application.Models.Request;
 using Application.Services;
-using System;
 using Application.Interfaces;
+using Domain.Exceptions; 
+using System;
 
-namespace YourApplication.Controllers
+namespace Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -21,19 +21,39 @@ namespace YourApplication.Controllers
         [HttpGet]
         public IActionResult GetAllProducts()
         {
-            var products = _productService.GetAllProducts();
-            return Ok(products);
+            try
+            {
+                var products = _productService.GetAllProducts();
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                
+                return StatusCode(500, "An unexpected error occurred.");
+            }
         }
 
         [HttpGet("{id}")]
         public IActionResult GetProductById(int id)
         {
-            var product = _productService.GetProductById(id);
-            if (product == null)
+            try
             {
-                return NotFound();
+                var product = _productService.GetProductById(id);
+                if (product == null)
+                {
+                    throw new NotFoundException("Product", id);
+                }
+                return Ok(product);
             }
-            return Ok(product);
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                
+                return StatusCode(500, "An unexpected error occurred.");
+            }
         }
 
         [HttpPost]
@@ -46,7 +66,8 @@ namespace YourApplication.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                
+                return StatusCode(500, "An unexpected error occurred.");
             }
         }
 
@@ -56,11 +77,16 @@ namespace YourApplication.Controllers
             try
             {
                 _productService.UpdateProduct(id, productUpdateRequest);
-                return Ok();
+                return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                
+                return StatusCode(500, "An unexpected error occurred.");
             }
         }
 
@@ -70,13 +96,17 @@ namespace YourApplication.Controllers
             try
             {
                 _productService.DeleteProduct(id);
-                return Ok();
+                return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                
+                return StatusCode(500, "An unexpected error occurred.");
             }
         }
     }
 }
-

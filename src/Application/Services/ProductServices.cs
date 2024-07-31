@@ -3,6 +3,7 @@ using Application.Models;
 using Application.Models.Request;
 using Domain;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 
 namespace Application.Services
@@ -24,7 +25,8 @@ namespace Application.Services
 
         public ProductDTO GetProductById(int id)
         {
-            var obj = _productRepository.GetById(id);
+            var obj = _productRepository.GetById(id)
+                ?? throw new NotFoundException(nameof(Product), id);
             return ProductDTO.Create(obj);
         }
 
@@ -36,10 +38,12 @@ namespace Application.Services
 
         public void UpdateProduct(int id, ProductUpdateRequest productUpdateRequest)
         {
-            var product = _productRepository.GetById(id);
+            var product = _productRepository.GetById(id)
+                ?? throw new NotFoundException(nameof(Product), id); 
+
             if (productUpdateRequest.Name != string.Empty) product.Name = productUpdateRequest.Name;
 
-            if (productUpdateRequest.Price != ) product.Price = productUpdateRequest.Price;
+            if (productUpdateRequest.Price != null) product.Price = productUpdateRequest.Price;
 
             if (productUpdateRequest.StockAvailable != null) product.StockAvailable = productUpdateRequest.StockAvailable;
 

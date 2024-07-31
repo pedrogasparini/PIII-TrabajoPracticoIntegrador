@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application.Models.Request;
 using Application.Services;
-using System;
 using Application.Interfaces;
+using Domain.Exceptions; 
+using System;
+using System.Collections.Generic;
+using Application.Models;
+using Domain.Entities;
 
-namespace YourApplication.Controllers
+namespace Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -18,25 +22,45 @@ namespace YourApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllSaleDetails()
+        public ActionResult<IEnumerable<SaleDetail>> GetAllSaleDetails()
         {
-            var saleDetails = _saleDetailService.GetAllSaleDetails();
-            return Ok(saleDetails);
+            try
+            {
+                var saleDetails = _saleDetailService.GetAllSaleDetails();
+                return Ok(saleDetails);
+            }
+            catch (Exception ex)
+            {
+                
+                return StatusCode(500, "An unexpected error occurred.");
+            }
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetSaleDetailById(int id)
+        public ActionResult<SaleDetailDTO> GetSaleDetailById(int id)
         {
-            var saleDetail = _saleDetailService.GetSaleDetailById(id);
-            if (saleDetail == null)
+            try
             {
-                return NotFound();
+                var saleDetail = _saleDetailService.GetSaleDetailById(id);
+                if (saleDetail == null)
+                {
+                    throw new NotFoundException("SaleDetail", id);
+                }
+                return Ok(saleDetail);
             }
-            return Ok(saleDetail);
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                
+                return StatusCode(500, "An unexpected error occurred.");
+            }
         }
 
         [HttpPost]
-        public IActionResult CreateSaleDetail([FromBody] SaleDetailCreateRequest saleDetailCreateRequest)
+        public ActionResult CreateSaleDetail([FromBody] SaleDetailCreateRequest saleDetailCreateRequest)
         {
             try
             {
@@ -45,7 +69,8 @@ namespace YourApplication.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                
+                return StatusCode(500, "An unexpected error occurred.");
             }
         }
 
@@ -55,11 +80,16 @@ namespace YourApplication.Controllers
             try
             {
                 _saleDetailService.UpdateSaleDetail(id, saleDetailUpdateRequest);
-                return Ok();
+                return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                
+                return StatusCode(500, "An unexpected error occurred.");
             }
         }
 
@@ -69,13 +99,17 @@ namespace YourApplication.Controllers
             try
             {
                 _saleDetailService.DeleteSaleDetail(id);
-                return Ok();
+                return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                
+                return StatusCode(500, "An unexpected error occurred.");
             }
         }
     }
 }
-

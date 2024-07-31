@@ -4,6 +4,7 @@ using Application.Models;
 using Application.Models.Request;
 using Domain;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 
 namespace Application.Services
@@ -25,19 +26,24 @@ namespace Application.Services
 
         public AdminDTO GetAdminById(int id)
         {
-           var obj =  _adminRepository.GetById(id);
+           var obj =  _adminRepository.GetById(id)
+             ?? throw new NotFoundException(nameof(Admin), id);
+
             return AdminDTO.Create(obj);
         }
 
-        public void CreateAdmin(AdminCreateRequest adminCreteRequest)
+        public void CreateAdmin( AdminCreateRequest adminCreteRequest)
         {
             var admin = new Admin(adminCreteRequest.Name, adminCreteRequest.LastName, adminCreteRequest.Email, adminCreteRequest.Username, adminCreteRequest.Password);
+             
             _adminRepository.Add(admin);
         }
 
         public void UpdateAdmin(int id, AdminUpdateRequest adminUpdateRequest)
         {
-            var admin = _adminRepository.GetById(id);
+            var admin = _adminRepository.GetById(id)
+              ?? throw new NotFoundException(nameof(Admin), id);
+
             if (adminUpdateRequest.Name != string.Empty) admin.Name = adminUpdateRequest.Name;
 
             if (adminUpdateRequest.Email != string.Empty) admin.Email = adminUpdateRequest.Email;

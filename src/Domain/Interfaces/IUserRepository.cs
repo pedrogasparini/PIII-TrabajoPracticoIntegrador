@@ -5,4 +5,5 @@ namespace Domain;
 
 public interface IUserRepository : IBaseRepository<User>
 {
+    User? GetUserByUserName(string userName);
 }

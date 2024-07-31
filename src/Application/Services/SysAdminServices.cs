@@ -3,6 +3,7 @@ using Application.Models;
 using Application.Models.Request;
 using Domain;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 
 namespace Application.Services
@@ -24,7 +25,8 @@ namespace Application.Services
 
         public SysAdminDTO GetSysAdminById(int id)
         {
-            var obj = _sysadminRepository.GetById(id);
+            var obj = _sysadminRepository.GetById(id)
+                ?? throw new NotFoundException(nameof(SysAdmin), id);
             return SysAdminDTO.Create(obj);
         }
 
@@ -35,7 +37,9 @@ namespace Application.Services
         }
         public void UpdateSysAdmin(int id, SysAdminUpdateRequest sysAdminUpdateRequest)
         {
-            var admin = _sysadminRepository.GetById(id);
+            var admin = _sysadminRepository.GetById(id)
+                ?? throw new NotFoundException(nameof(SysAdmin), id);
+
             if (sysAdminUpdateRequest.Name != string.Empty) admin.Name = sysAdminUpdateRequest.Name;
 
             if (sysAdminUpdateRequest.Email != string.Empty) admin.Email = sysAdminUpdateRequest.Email;

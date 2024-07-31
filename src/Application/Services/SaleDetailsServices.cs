@@ -6,6 +6,7 @@ using Domain;
 using Domain.Entities;
 using Domain.Interfaces;
 using global::Application.Interfaces;
+using Domain.Exceptions;
 
 namespace Application.Services
 {
@@ -32,7 +33,8 @@ namespace Application.Services
 
         public SaleDetailDTO GetSaleDetailById(int id)
         {
-            var obj = _saledetailsRepository.GetById(id);
+            var obj = _saledetailsRepository.GetById(id)
+                ?? throw new NotFoundException(nameof(SaleDetail), id);
             return SaleDetailDTO.Create(obj);
         }
 
@@ -46,7 +48,8 @@ namespace Application.Services
 
         public void UpdateSaleDetail(int id, SaleDetailUpdateRequest saledetailUpdateRequest)
         {
-            var saledetail = _saledetailsRepository.GetById(id);
+            var saledetail = _saledetailsRepository.GetById(id)
+                ?? throw new NotFoundException(nameof(SaleDetail), id);
             var sale = _saleRepository.GetById(saledetailUpdateRequest.SaleId);
             var product = _productRepository.GetById(saledetailUpdateRequest.ProductId);
 
