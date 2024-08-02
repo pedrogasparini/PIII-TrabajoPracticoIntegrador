@@ -6,10 +6,12 @@ using Application.Models;
 using Domain.Exceptions; 
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
     [ApiController]
+    [Authorize(Roles = "SysAdmin")]
     [Route("api/[controller]")]
     public class SysAdminController : ControllerBase
     {

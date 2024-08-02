@@ -7,10 +7,12 @@ using System;
 using System.Collections.Generic;
 using Application.Models;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class SaleDetailController : ControllerBase
     {
@@ -22,6 +24,7 @@ namespace Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Client, SysAdmin, Admin")]
         public ActionResult<IEnumerable<SaleDetail>> GetAllSaleDetails()
         {
             try
@@ -37,6 +40,7 @@ namespace Web.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Client, SysAdmin, Admin")]
         public ActionResult<SaleDetailDTO> GetSaleDetailById(int id)
         {
             try
@@ -60,6 +64,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Client, SysAdmin, Admin")]
         public ActionResult CreateSaleDetail([FromBody] SaleDetailCreateRequest saleDetailCreateRequest)
         {
             try
@@ -75,6 +80,7 @@ namespace Web.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Client, SysAdmin, Admin")]
         public IActionResult UpdateSaleDetail(int id, [FromBody] SaleDetailUpdateRequest saleDetailUpdateRequest)
         {
             try
@@ -94,6 +100,7 @@ namespace Web.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Client, SysAdmin, Admin")]
         public IActionResult DeleteSaleDetail(int id)
         {
             try

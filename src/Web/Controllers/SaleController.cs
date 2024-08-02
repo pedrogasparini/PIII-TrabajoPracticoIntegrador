@@ -4,10 +4,12 @@ using Application.Services;
 using Application.Interfaces;
 using Domain.Exceptions;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class SaleController : ControllerBase
     {
@@ -19,6 +21,7 @@ namespace Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Client, SysAdmin, Admin")]
         public IActionResult GetAllSales()
         {
             try
@@ -28,12 +31,13 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Client, SysAdmin, Admin")]
         public IActionResult GetSaleById(int id)
         {
             try
@@ -57,6 +61,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Client, SysAdmin, Admin")]
         public IActionResult CreateSale(SaleCreateRequest saleCreateRequest)
         {
             try
@@ -72,6 +77,7 @@ namespace Web.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Client, SysAdmin, Admin")]
         public IActionResult UpdateSale(int id, [FromBody] SaleUpdateRequest saleUpdateRequest)
         {
             try
@@ -91,6 +97,7 @@ namespace Web.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Client, SysAdmin, Admin")]
         public IActionResult DeleteSale(int id)
         {
             try

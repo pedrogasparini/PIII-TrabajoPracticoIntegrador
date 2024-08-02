@@ -4,10 +4,12 @@ using Application.Services;
 using Application.Interfaces;
 using Domain.Exceptions; 
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class ProductController : ControllerBase
     {
@@ -19,6 +21,7 @@ namespace Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Client, SysAdmin, Admin")]
         public IActionResult GetAllProducts()
         {
             try
@@ -34,6 +37,7 @@ namespace Web.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Client, SysAdmin, Admin")]
         public IActionResult GetProductById(int id)
         {
             try
@@ -57,6 +61,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "SysAdmin, Admin")]
         public IActionResult CreateProduct([FromBody] ProductCreateRequest productCreateRequest)
         {
             try
@@ -72,6 +77,7 @@ namespace Web.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "SysAdmin, Admin")]
         public IActionResult UpdateProduct(int id, [FromBody] ProductUpdateRequest productUpdateRequest)
         {
             try
@@ -91,6 +97,7 @@ namespace Web.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "SysAdmin, Admin")]
         public IActionResult DeleteProduct(int id)
         {
             try
