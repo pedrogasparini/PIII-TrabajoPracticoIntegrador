@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Web.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "SysAdmin")]
+    [Authorize(Roles = "SysAdmin, Admin")]
     [Route("api/[controller]")]
     public class ClientController : ControllerBase
     {

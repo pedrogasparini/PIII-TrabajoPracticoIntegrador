@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Web.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "SysAdmin")]
+    [Authorize(Roles = "SysAdmin, Admin")]
     [Route("api/[controller]")]
     public class AdminController : ControllerBase
     {
@@ -33,7 +33,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
+                
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }
@@ -56,7 +56,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
+                
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }
@@ -71,12 +71,13 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
+                
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }
 
         [HttpPut("{id}")]
+        
         public IActionResult UpdateAdmin(int id, [FromBody] AdminUpdateRequest adminUpdateRequest)
         {
             try
@@ -90,12 +91,13 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
+                
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }
 
         [HttpDelete("{id}")]
+        
         public IActionResult DeleteAdmin(int id)
         {
             try
@@ -109,7 +111,7 @@ namespace Web.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception
+                
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }
