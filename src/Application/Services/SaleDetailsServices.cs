@@ -42,7 +42,24 @@ namespace Application.Services
         {
             var sale = _saleRepository.GetById(saledetailCreteRequest.SaleId);
             var product = _productRepository.GetById(saledetailCreteRequest.ProductId);
-            var saledetail = new SaleDetail(sale, product, saledetailCreteRequest.Quantity, saledetailCreteRequest.UnitPrice);
+            // Verifica que el producto exista
+            if (product == null)
+            {
+                throw new NotFoundException(nameof(Product), saledetailCreteRequest.ProductId);
+            }
+
+            // Verifica que haya suficiente stock
+            if (product.StockAvailable < saledetailCreteRequest.Quantity)
+            {
+                throw new InvalidOperationException("No hay suficiente stock disponible.");
+            }
+
+            // Resta la cantidad del stock del producto
+            product.StockAvailable -= saledetailCreteRequest.Quantity;
+
+            // Actualiza el producto en el repositorio
+            _productRepository.Update(product);
+             var saledetail = new SaleDetail(sale, product, saledetailCreteRequest.Quantity, saledetailCreteRequest.UnitPrice);
             _saledetailsRepository.Add(saledetail);
         }
 

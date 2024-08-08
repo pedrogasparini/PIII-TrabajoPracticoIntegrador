@@ -20,7 +20,7 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Configuración de las relaciones entre entidades
-        /* modelBuilder.Entity<SaleDetail>()
+        modelBuilder.Entity<SaleDetail>()
              .HasKey(sd => new { sd.SaleId, sd.ProductId });
 
          modelBuilder.Entity<SaleDetail>()
@@ -31,7 +31,7 @@ public class AppDbContext : DbContext
          modelBuilder.Entity<SaleDetail>()
              .HasOne(sd => sd.Product)
              .WithMany()
-             .HasForeignKey(sd => sd.ProductId);*/
+             .HasForeignKey(sd => sd.ProductId);
 
         // Configuración adicional de entidades si es necesario
         modelBuilder.Entity<User>().HasDiscriminator(u => u.UserType);
