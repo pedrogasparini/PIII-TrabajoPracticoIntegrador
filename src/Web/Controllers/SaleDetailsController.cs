@@ -72,12 +72,23 @@ namespace Web.Controllers
                 _saleDetailService.CreateSaleDetail(saleDetailCreateRequest);
                 return Ok();
             }
+            catch (NotFoundException ex)
+            {
+                // Maneja la excepción cuando no se encuentra un recurso
+                return NotFound(ex.Message);
+            }
+            catch (InvalidStockException ex)
+            {
+                // Maneja la excepción de stock insuficiente
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
-                
+                // Cualquier otro error inesperado
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }
+
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Client, SysAdmin, Admin")]

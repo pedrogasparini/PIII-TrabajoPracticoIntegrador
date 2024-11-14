@@ -42,6 +42,7 @@ namespace Application.Services
         {
             var sale = _saleRepository.GetById(saledetailCreteRequest.SaleId);
             var product = _productRepository.GetById(saledetailCreteRequest.ProductId);
+
             // Verifica que el producto exista
             if (product == null)
             {
@@ -51,7 +52,8 @@ namespace Application.Services
             // Verifica que haya suficiente stock
             if (product.StockAvailable < saledetailCreteRequest.Quantity)
             {
-                throw new InvalidOperationException("No hay suficiente stock disponible.");
+                // Se lanza una excepción más específica con un mensaje claro
+                throw new InvalidStockException("No hay suficiente stock disponible para este producto.");
             }
 
             // Resta la cantidad del stock del producto
@@ -59,7 +61,8 @@ namespace Application.Services
 
             // Actualiza el producto en el repositorio
             _productRepository.Update(product);
-             var saledetail = new SaleDetail(sale, product, saledetailCreteRequest.Quantity, saledetailCreteRequest.UnitPrice);
+
+            var saledetail = new SaleDetail(sale, product, saledetailCreteRequest.Quantity, saledetailCreteRequest.UnitPrice);
             _saledetailsRepository.Add(saledetail);
         }
 
