@@ -19,9 +19,6 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Configuración de las relaciones entre entidades
-        modelBuilder.Entity<SaleDetail>()
-             .HasKey(sd => new { sd.SaleId, sd.ProductId });
 
          modelBuilder.Entity<SaleDetail>()
              .HasOne(sd => sd.Sale)
